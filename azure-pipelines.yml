@@ -12,8 +12,6 @@ pool:
   - npm
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
   dotnetSdkVersion: '3.1.100'
@@ -22,8 +20,7 @@ steps:
 - task: UseDotNet@2
   displayName: 'Use .NET Core SDK $(dotnetSdkVersion)'
   inputs:
-    packageType: sdk
-    version: $(dotnetSdkVersion)
+    version: '$(dotnetSdkVersion)'
 
 - task: Npm@1
   displayName: 'Run npm install'
@@ -41,7 +38,7 @@ steps:
   workingDirectory: $(wwwrootDir)
 
 - task: DotNetCoreCLI@2
-  displayName: 'Restore and install project dependencies'
+  displayName: 'Restore project dependencies'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
@@ -61,14 +58,6 @@ steps:
     publishWebProjects: false
     arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
     zipAfterPublish: true
-
-- template: templates/build.yml
-  parameters:
-    buildConfiguration: 'Debug' 
-
-- template: templates/build.yml
-  parameters:
-    buildConfiguration: 'Release'     
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
